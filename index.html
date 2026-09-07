@@ -1,0 +1,1857 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>NISHCHAY D DEVANGA (DD) - Project Controls Command Center</title>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            /* Light Executive Palette */
+            --primary-navy: #1e3a5f;       /* Deep Corporate Blue */
+            --accent-blue: #0284c7;        /* Crisp Tech Blue */
+            --accent-hover: #0369a1;
+            --light-blue: #f0f7ff;         /* Soft Powder Accent */
+            --dark-slate: #1e293b;         /* Charcoal Body Text */
+            --card-bg: #ffffff;            /* Pure Crisp White */
+            --border-subtle: #e2e8f0;      /* Clean Architectural Gray */
+            --text-muted: #64748b;         /* Slate Secondary Text */
+            --alert-red: #dc2626;
+            --alert-yellow: #d97706;
+            --alert-green: #16a34a;
+            --bg-gradient: #f8fafc;        /* Clean Off-White Background */
+            --shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.05), 0 2px 6px -1px rgba(15, 23, 42, 0.03);
+            --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-gradient);
+            color: var(--dark-slate);
+            display: flex;
+            min-height: 100vh;
+            overflow-x: hidden;
+            overflow-y: auto;
+        }
+
+        /* Container Layout */
+        .app-container {
+            display: flex;
+            width: 100%;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        /* Collapsible Left Drawer Sidebar */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: -320px;
+            width: 300px;
+            height: 100vh;
+            background-color: #ffffff;
+            border-right: 1px solid var(--border-subtle);
+            color: var(--dark-slate);
+            display: flex;
+            flex-direction: column;
+            padding: 24px 20px;
+            box-shadow: 10px 0 35px rgba(15, 23, 42, 0.08);
+            z-index: 1000;
+            justify-content: space-between;
+            transition: var(--transition);
+            overflow: hidden;
+        }
+
+        .sidebar.open {
+            left: 0;
+        }
+
+        /* Overlay Backdrop */
+        .sidebar-backdrop {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(15, 23, 42, 0.25);
+            backdrop-filter: blur(4px);
+            z-index: 999;
+        }
+
+        .sidebar-backdrop.active {
+            display: block;
+        }
+
+        .close-drawer-btn {
+            position: absolute;
+            top: 14px;
+            right: 16px;
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 1.25rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .close-drawer-btn:hover {
+            color: var(--primary-navy);
+        }
+
+        .profile-card {
+            text-align: center;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border-subtle);
+            margin-bottom: 14px;
+            margin-top: 5px;
+        }
+
+        .profile-avatar {
+            width: 78px;
+            height: 78px;
+            border-radius: 50%;
+            margin: 0 auto 10px auto;
+            border: 3px solid #ffffff;
+            box-shadow: 0 4px 12px rgba(2, 132, 199, 0.15);
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--light-blue);
+        }
+
+        .profile-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .profile-card h2 {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--primary-navy);
+            margin-bottom: 3px;
+            letter-spacing: 0.3px;
+        }
+
+        .profile-card p {
+            font-size: 0.72rem;
+            color: var(--accent-blue);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+        }
+
+        .nav-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            flex-grow: 1;
+            justify-content: center;
+        }
+
+        .nav-btn {
+            background: transparent;
+            border: 1px solid transparent;
+            color: var(--text-muted);
+            padding: 10px 14px;
+            text-align: left;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            width: 100%;
+        }
+
+        .nav-btn i {
+            font-size: 1rem;
+            transition: var(--transition);
+            width: 18px;
+            text-align: center;
+            color: var(--text-muted);
+        }
+
+        .nav-btn:hover {
+            background-color: var(--light-blue);
+            color: var(--primary-navy);
+            border-color: rgba(2, 132, 199, 0.15);
+            transform: translateX(4px);
+        }
+
+        .nav-btn:hover i {
+            color: var(--accent-blue);
+        }
+
+        .nav-btn.active {
+            background-color: var(--light-blue);
+            color: var(--accent-blue);
+            font-weight: 700;
+            border-color: rgba(2, 132, 199, 0.2);
+        }
+
+        .nav-btn.active i {
+            color: var(--accent-blue);
+        }
+
+        .sidebar-footer {
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            text-align: center;
+            border-top: 1px solid var(--border-subtle);
+            padding-top: 12px;
+        }
+
+        /* Main Workspace Area */
+        .main-workspace {
+            flex: 1;
+            padding: 28px 36px;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            width: 100%;
+        }
+
+        /* Top Header Control Bar */
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            background: #ffffff;
+            border: 1px solid var(--border-subtle);
+            padding: 14px 22px;
+            border-radius: 14px;
+            box-shadow: var(--shadow);
+            position: relative;
+        }
+
+        .menu-toggle-btn {
+            background-color: var(--light-blue);
+            color: var(--primary-navy);
+            border: 1px solid rgba(2, 132, 199, 0.15);
+            padding: 9px 16px;
+            border-radius: 8px;
+            font-size: 0.88rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: var(--transition);
+        }
+
+        .menu-toggle-btn:hover {
+            background-color: var(--accent-blue);
+            color: #ffffff;
+            border-color: var(--accent-blue);
+        }
+
+        .header-center-title {
+            text-align: center;
+            flex-grow: 1;
+            cursor: pointer;
+            user-select: none;
+            transition: var(--transition);
+        }
+
+        .header-center-title:hover h1 {
+            color: var(--accent-blue);
+        }
+
+        .header-center-title h1 {
+            font-size: 1.35rem;
+            color: var(--primary-navy);
+            font-weight: 800;
+            line-height: 1.2;
+            letter-spacing: 0.3px;
+            transition: var(--transition);
+        }
+
+        .header-center-title p {
+            font-size: 0.78rem;
+            color: var(--accent-blue);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            margin-top: 2px;
+        }
+
+        .quick-contact-pills {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .contact-pill {
+            background-color: #ffffff;
+            padding: 7px 14px;
+            border-radius: 8px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: var(--dark-slate);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            text-decoration: none;
+            border: 1px solid var(--border-subtle);
+            transition: var(--transition);
+        }
+
+        .contact-pill:hover {
+            background-color: var(--light-blue);
+            color: var(--accent-blue);
+            border-color: var(--accent-blue);
+            transform: translateY(-2px);
+        }
+
+        /* Section Title Header for Active Tab */
+        .tab-section-header {
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: var(--primary-navy);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Tab Content Control */
+        .tab-content {
+            display: none;
+            animation: slideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Interactive KPI Cards */
+        .kpi-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .kpi-card {
+            background: var(--card-bg);
+            padding: 20px 22px;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-subtle);
+            border-left: 4px solid var(--accent-blue);
+            position: relative;
+            overflow: hidden;
+            transition: var(--transition);
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .kpi-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px -3px rgba(2, 132, 199, 0.12);
+            border-color: var(--accent-blue);
+        }
+
+        .kpi-card i {
+            position: absolute;
+            right: 14px;
+            bottom: 14px;
+            font-size: 2.2rem;
+            color: rgba(2, 132, 199, 0.08);
+            transition: var(--transition);
+        }
+
+        .kpi-card:hover i {
+            color: rgba(2, 132, 199, 0.16);
+            transform: scale(1.08);
+        }
+
+        .kpi-value {
+            font-size: 1.55rem;
+            font-weight: 800;
+            color: var(--primary-navy);
+            line-height: 1.2;
+        }
+
+        .kpi-label {
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            font-weight: 700;
+            color: var(--text-muted);
+            letter-spacing: 0.5px;
+            margin-top: 6px;
+        }
+
+        /* Grids & Cards */
+        .grid-2col {
+            display: grid;
+            grid-template-columns: 1.3fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .dashboard-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-subtle);
+            margin-bottom: 20px;
+        }
+
+        .card-header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            border-bottom: 1px solid var(--border-subtle);
+            padding-bottom: 12px;
+        }
+
+        .card-title {
+            color: var(--primary-navy);
+            font-size: 1.05rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .styled-list {
+            list-style: none;
+        }
+
+        .styled-list li {
+            position: relative;
+            padding-left: 22px;
+            margin-bottom: 12px;
+            font-size: 0.88rem;
+            line-height: 1.55;
+            color: var(--dark-slate);
+        }
+
+        .styled-list li::before {
+            content: "\f00c";
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            color: var(--accent-blue);
+            position: absolute;
+            left: 0;
+            top: 2px;
+            font-size: 0.8rem;
+        }
+
+        /* Vertical Interactive Timeline Layout */
+        .vertical-timeline-layout {
+            display: grid;
+            grid-template-columns: 320px 1fr;
+            gap: 25px;
+            align-items: start;
+        }
+
+        .vertical-timeline-track-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            border: 1px solid var(--border-subtle);
+            padding: 22px;
+            box-shadow: var(--shadow);
+            max-height: 580px;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .v-gantt-flow {
+            position: relative;
+            padding-left: 26px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .v-gantt-flow::before {
+            content: '';
+            position: absolute;
+            top: 6px;
+            bottom: 6px;
+            left: 8px;
+            width: 3px;
+            background-color: var(--border-subtle);
+            z-index: 1;
+        }
+
+        .v-gantt-node {
+            position: relative;
+            z-index: 2;
+            cursor: pointer;
+            padding: 9px 14px;
+            border-radius: 8px;
+            border: 1px solid var(--border-subtle);
+            background-color: #ffffff;
+            transition: var(--transition);
+        }
+
+        .v-gantt-node:hover {
+            border-color: var(--accent-blue);
+            background-color: var(--light-blue);
+        }
+
+        .v-gantt-node.active {
+            border-color: var(--accent-blue);
+            background-color: var(--light-blue);
+        }
+
+        .v-gantt-dot {
+            position: absolute;
+            left: -23px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background-color: #ffffff;
+            border: 3px solid var(--text-muted);
+            transition: var(--transition);
+            z-index: 3;
+        }
+
+        .v-gantt-node:hover .v-gantt-dot, .v-gantt-node.active .v-gantt-dot {
+            background-color: var(--accent-blue);
+            border-color: #ffffff;
+            box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.25);
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .v-gantt-year {
+            font-weight: 700;
+            font-size: 0.85rem;
+            color: var(--primary-navy);
+        }
+
+        .v-gantt-label {
+            font-size: 0.74rem;
+            color: var(--text-muted);
+            margin-top: 2px;
+            font-weight: 600;
+        }
+
+        .v-gantt-detail-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            border: 1px solid var(--border-subtle);
+            padding: 26px;
+            box-shadow: var(--shadow);
+            max-height: 580px;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .v-gantt-viewer-panel {
+            animation: fadeIn 0.25s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Systems Exposure Matrix styles */
+        .systems-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 14px;
+        }
+
+        .system-card {
+            background: #ffffff;
+            border: 1px solid var(--border-subtle);
+            border-radius: 10px;
+            padding: 16px;
+            transition: var(--transition);
+        }
+
+        .system-card:hover {
+            border-color: var(--accent-blue);
+            background-color: var(--light-blue);
+            transform: translateY(-2px);
+        }
+
+        .system-card h4 {
+            font-size: 0.92rem;
+            color: var(--primary-navy);
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .system-card p {
+            font-size: 0.8rem;
+            line-height: 1.45;
+            color: var(--text-muted);
+        }
+
+        /* High Fidelity Delay Analysis Sandbox */
+        .sim-box {
+            background: #ffffff;
+            border: 1px solid var(--border-subtle);
+            color: var(--dark-slate);
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: var(--shadow);
+            margin-bottom: 20px;
+        }
+
+        .sim-grid {
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: 20px;
+            margin-top: 18px;
+        }
+
+        .sim-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            max-height: 480px;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            padding-right: 4px;
+        }
+
+        .sim-selector-btn {
+            background: #ffffff;
+            border: 1px solid var(--border-subtle);
+            color: var(--dark-slate);
+            padding: 10px 14px;
+            border-radius: 8px;
+            text-align: left;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 0.82rem;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .sim-selector-btn:hover {
+            background: var(--light-blue);
+            border-color: var(--accent-blue);
+            color: var(--primary-navy);
+            transform: translateX(4px);
+        }
+
+        .sim-selector-btn.active {
+            background: var(--light-blue);
+            color: var(--primary-navy);
+            border-color: var(--accent-blue);
+            font-weight: 700;
+        }
+
+        .sim-selector-btn span.severity {
+            font-size: 0.68rem;
+            font-weight: 700;
+            padding: 3px 7px;
+            border-radius: 6px;
+            white-space: nowrap;
+        }
+
+        .severity.critical { background: #fee2e2; color: var(--alert-red); }
+        .severity.high { background: #fef3c7; color: var(--alert-yellow); }
+        .severity.low { background: #dcfce7; color: var(--alert-green); }
+
+        .sim-viewer {
+            background: var(--light-blue);
+            border-radius: 10px;
+            padding: 20px;
+            border: 1px solid rgba(2, 132, 199, 0.2);
+            border-left: 4px solid var(--accent-blue);
+            max-height: 480px;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .sim-title-header {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--primary-navy);
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .sim-block {
+            margin-bottom: 14px;
+        }
+
+        .sim-block-title {
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            font-weight: 700;
+            color: var(--accent-blue);
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }
+
+        .sim-block-text {
+            font-size: 0.85rem;
+            line-height: 1.5;
+            color: var(--dark-slate);
+        }
+
+        /* Skills Tag Cloud */
+        .tag-cloud {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .skill-tag {
+            background-color: var(--light-blue);
+            color: var(--primary-navy);
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            border: 1px solid rgba(2, 132, 199, 0.15);
+            transition: var(--transition);
+        }
+
+        .skill-tag:hover {
+            background-color: var(--accent-blue);
+            color: #ffffff;
+            transform: translateY(-2px);
+        }
+
+        /* Trophies Grid */
+        .trophy-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 16px;
+        }
+
+        .trophy-card {
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 18px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-subtle);
+            display: flex;
+            gap: 14px;
+            align-items: flex-start;
+            transition: var(--transition);
+        }
+
+        .trophy-card:hover {
+            transform: translateY(-2px);
+            border-color: var(--accent-blue);
+            box-shadow: 0 8px 20px rgba(2, 132, 199, 0.1);
+        }
+
+        .trophy-icon {
+            font-size: 1.6rem;
+            color: var(--accent-blue);
+        }
+
+        .trophy-info h4 {
+            color: var(--primary-navy);
+            font-size: 0.92rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .trophy-info p {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            line-height: 1.45;
+        }
+
+        /* Category Section Headers in Contact Tab */
+        .category-section-title {
+            font-size: 1.05rem;
+            font-weight: 800;
+            color: var(--primary-navy);
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-bottom: 1px solid var(--border-subtle);
+            padding-bottom: 8px;
+        }
+
+        /* Contact Details Card Grid */
+        .contact-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 16px;
+            margin-bottom: 28px;
+        }
+
+        .contact-card {
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 18px 20px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-subtle);
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            transition: var(--transition);
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .contact-card:hover {
+            transform: translateY(-2px);
+            border-color: var(--accent-blue);
+            box-shadow: 0 8px 20px rgba(2, 132, 199, 0.1);
+        }
+
+        .contact-icon-box {
+            width: 48px;
+            height: 48px;
+            min-width: 48px;
+            min-height: 48px;
+            flex-shrink: 0;
+            border-radius: 10px;
+            background-color: var(--light-blue);
+            color: var(--accent-blue);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            transition: var(--transition);
+        }
+
+        .contact-card:hover .contact-icon-box {
+            background-color: var(--accent-blue);
+            color: #ffffff;
+        }
+
+        .contact-details {
+            overflow: hidden;
+        }
+
+        .contact-details h4 {
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            font-weight: 700;
+            margin-bottom: 3px;
+            letter-spacing: 0.5px;
+        }
+
+        .contact-details p {
+            font-size: 0.92rem;
+            font-weight: 700;
+            color: var(--primary-navy);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 1024px) {
+            .main-workspace {
+                padding: 20px 18px;
+            }
+            .top-bar {
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+                padding: 12px 16px;
+            }
+            .header-center-title {
+                text-align: center;
+                margin: 0 10px;
+                flex-grow: 1;
+            }
+            .header-center-title h1 {
+                font-size: 1.1rem;
+            }
+            .header-center-title p {
+                font-size: 0.68rem;
+            }
+            .quick-contact-pills {
+                display: none;
+            }
+            .grid-2col, .sim-grid, .vertical-timeline-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+    
+    <!-- Unified Script Panel -->
+    <script>
+        function removeCitationTags() {
+            try {
+                const citeRegex = /\[(?:cite|source|doc_id|source_id):\s*[\d,\s]+\]/gi;
+                const walker = document.createTreeWalker(
+                    document.body || document.documentElement,
+                    NodeFilter.SHOW_TEXT,
+                    null,
+                    false
+                );
+                let node;
+                while (node = walker.nextNode()) {
+                    if (citeRegex.test(node.nodeValue)) {
+                        node.nodeValue = node.nodeValue.replace(citeRegex, '');
+                    }
+                }
+            } catch(e) {
+                console.error("Sanitizer error: ", e);
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            removeCitationTags();
+            setTimeout(removeCitationTags, 200);
+        });
+
+        function toggleMenu() {
+            const sidebar = document.getElementById('sidebar-drawer');
+            const backdrop = document.getElementById('sidebar-backdrop');
+            sidebar.classList.toggle('open');
+            backdrop.classList.toggle('active');
+        }
+
+        function closeMenu() {
+            const sidebar = document.getElementById('sidebar-drawer');
+            const backdrop = document.getElementById('sidebar-backdrop');
+            sidebar.classList.remove('open');
+            backdrop.classList.remove('active');
+        }
+
+        function switchTab(tabId, element) {
+            try {
+                document.querySelectorAll('.tab-content').forEach(tab => {
+                    tab.classList.remove('active');
+                });
+                
+                document.querySelectorAll('.nav-menu .nav-btn').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                
+                const targetTab = document.getElementById(tabId);
+                if (targetTab) {
+                    targetTab.classList.add('active');
+                }
+
+                const targetNavBtn = document.querySelector(`.nav-menu .nav-btn[onclick*="'${tabId}'"]`);
+                if (targetNavBtn) {
+                    targetNavBtn.classList.add('active');
+                } else if (element) {
+                    element.classList.add('active');
+                }
+
+                const tabTitles = {
+                    'dashboard': 'Executive Overview',
+                    'timeline': 'Interactive CPM Timeline',
+                    'internship': 'Internship Logs & Live Projects',
+                    'sandbox': 'Delay Simulation & Recovery Matrix',
+                    'technical': 'Systems & Skills Matrix',
+                    'awards': 'Honors & Trophies',
+                    'contact': 'Direct Contact & Social Channels'
+                };
+                
+                const titleHeader = document.getElementById('current-tab-heading');
+                if (titleHeader && tabTitles[tabId]) {
+                    titleHeader.innerText = tabTitles[tabId];
+                }
+
+                closeMenu();
+                removeCitationTags();
+            } catch (err) {
+                console.error("Navigation switch error: ", err);
+            }
+        }
+
+        function goToExecutiveOverview() {
+            switchTab('dashboard');
+        }
+
+        const nodeDb = {
+            'bcd-gl': {
+                company: "BCD Global, Dubai, UAE",
+                role: "Senior Planning Manager / Project Planner Lead (Overall Company Planner)",
+                bullets: [
+                    "Directing end-to-end master planning, scheduling architectures, and operational controls across BCD Global Developer Projects and the specialized BCD Paliath Interiors division.",
+                    "Serving as the central Company Lead Planner overseeing overarching cost variances, master time baselines, procurement cycles, and delivery handovers for 5 active concurrent developments (AED 80M order book).",
+                    "Pioneering company-wide Key Performance Indicators (KPIs) including Schedule Performance Index (SPI), Cost Performance Index (CPI), and Earned Value Management (EVM) frameworks for executive board evaluations.",
+                    "Formulating Key Risk Indicators (KRIs) to proactively detect logic disconnects, float degradation, subcontractor under-performance, and critical path supply chain slippages.",
+                    "Developing, baseline tracking, and updating master integrated Primavera P6 (EPPM) and MS Project schedules across EPC lifecycles (Engineering, Procurement, Construction, Fit-out).",
+                    "Executing advanced Time-Impact Delay Analyses (TIA), window analyses, and critical path resequencing strategies to insulate projects from Liquidated Damages (LD) and baseline offsets.",
+                    "Directing turn-key commercial interior fit-out schedules, synchronizing long-lead custom joinery, MEP first/second-fix approvals, and specialized architectural finishes.",
+                    "Heading Joint Venture (JV) setup logistics, contractor company formation, legal documentation structures, and foundational vendor qualification frameworks.",
+                    "Managing master cash-flow forecasting, resource loading/leveling models, and monthly financial S-curves in alignment with developer funding drawdowns.",
+                    "Auditing subcontractor interim payment applications (RA Bills), certifying executed quantities against verified site physical progress logs.",
+                    "Synthesizing dynamic, interactive Power BI and Excel Executive MIS Dashboards providing C-suite leadership with real-time portfolio health monitoring.",
+                    "Establishing procurement tracking mechanisms for primary civil systems including Aluminum Formwork, Ulma shoring, and Post-Tensioning tendon kits.",
+                    "Managing stakeholder communication matrix bridging consultants, main contractors, sub-contractors, project directors, legal teams, sales divisions, and client representatives.",
+                    "Establishing standardized site reporting protocols (DPR, WPR, MPR) and guiding site engineering teams on daily milestone tracking.",
+                    "Proactively driving cost-optimization models and resource redistribution to maintain gross margins across both development and interior fit-out divisions."
+                ]
+            },
+            'bcd-in': {
+                company: "BCD Group, India",
+                role: "Planning Manager",
+                bullets: [
+                    "Led overall project controls, scheduling mechanisms, and monthly sub-contractor billing cycles across a diverse real estate execution program.",
+                    "Collaborated with central procurement and factory facilities to align material fabrication limits with site consumption needs, successfully resolving material bottleneck logs.",
+                    "Formulated highly detailed micro-schedules and master baselines (MSP/Excel) to keep execution operations aligned with client-mandated handovers.",
+                    "Conducted rigorous delay path analysis and designed rapid progress recovery baselines to protect key milestones.",
+                    "Designed advanced progress reports, RFI logs, and client-facing presentations; streamlined external audits, screened engineering staff, and led annual performance reviews."
+                ]
+            },
+            'sai': {
+                company: "SAI Construction, India",
+                role: "Senior Planning Engineer",
+                bullets: [
+                    "Directed site planning controls, scheduling metrics, and day-to-day execution sequences for a premier 487 Cr residential project portfolio.",
+                    "Brigade Laguna (75 Cr INR): Supervised logistics, material procurement cycles, and structural concrete pouring tracking.",
+                    "Godrej Nurture (290 Cr INR): Managed multi-story residential towers, controlling materials calculations, productivity tracking, and baseline logic schedules.",
+                    "Godrej Ananda Ph1/Ph2 (120 Cr INR): Managed structural framing cycles and PT slab tension sequences.",
+                    "Godrej Royale Woods (2 Cr INR): Handled project closure operations, and quantitative material balance checks.",
+                    "Trained, mentored, and developed site planning interns on critical path concepts, S-curve preparation, and quality assurance processes."
+                ]
+            },
+            'nccc': {
+                company: "New Consolidated Construction Co Ltd., India",
+                role: "Assistant Planning Engineer",
+                bullets: [
+                    "Managed technical controls and progress tracking for the Prestige Tech Cloud (322+ Cr INR) commercial complex, spanning 5 premium multi-story tech office towers.",
+                    "Handled extensive material quantity estimations, material requirements calculations, and processed client/sub-contractor RA billing certificates.",
+                    "Drafted structural progress S-curves, labor histograms, and detailed variance analyses (Planned vs. Actual) for executive review boards.",
+                    "Coordinated quantity tracking, progress S-curve dashboards, and checked material requirements."
+                ]
+            },
+            'bmsit': {
+                company: "BMS Institute of Technology & Management, India",
+                role: "Visiting Faculty (Indeterminate Structures & CADD)",
+                bullets: [
+                    "Instructed advanced structural engineering classes, focusing on the Analysis of Indeterminate Structures and CADD modeling laboratory courses (4 hours/day).",
+                    "Achieved a celebrated 95% student pass rate through customized teaching modules, interactive technical design walkthroughs, and practical application workshops.",
+                    "Coordinated lab scheduling, student performance tracking, and mapped academic curriculum standards to real-world structural engineering practices."
+                ]
+            },
+            'site-eng': {
+                company: "Darvin Engineering, India",
+                role: "Site Engineer",
+                bullets: [
+                    "Supervised field structural concrete, plastering, columns, and site execution of 3-story premium residential villas.",
+                    "Directed site laborers, read structural blueprints, and verified reinforcement detailing.",
+                    "Controlled structural material logs, on-site inventory, and prepared daily progress reports (DPR)."
+                ]
+            },
+            'technic-s1': {
+                company: "Technic Constructions (Shantinagar), India",
+                role: "Site Engineer (Structural Concrete Block)",
+                bullets: [
+                    "Handled complete structural execution tracking for a 4-storey residential apartment development consisting of 12 luxury flats.",
+                    "Directed site layout settings, concrete pour optimizations, and supervised reinforced steel placements for advanced slab and column cycles.",
+                    "Ensured rigorous alignment metrics for cast structural grids, tracking subcontractor milestones and quantity logs."
+                ]
+            },
+            'technic-s2': {
+                company: "Technic Constructions (Jalahalli), India",
+                role: "Site Engineer (Finishes & SBM Block)",
+                bullets: [
+                    "Managed detailed Size Stone Masonry (SBM) and full-scale plastering works for an independent 2-storey premium residential layout.",
+                    "Monitored precise mortar proportions, material flow configurations, and execution consistency parameters across finishing sequences.",
+                    "Verified dimensional accuracy constraints and controlled resource allocations to minimize structural waste cycles."
+                ]
+            }
+        };
+
+        function loadTimelineNode(nodeKey, element) {
+            try {
+                document.querySelectorAll('.v-gantt-node').forEach(node => node.classList.remove('active'));
+                if (element) {
+                    element.classList.add('active');
+                }
+
+                const data = nodeDb[nodeKey];
+                if (data) {
+                    document.getElementById('node-company').innerText = data.company;
+                    document.getElementById('node-title').innerText = data.role;
+
+                    const list = document.getElementById('node-bullets');
+                    list.innerHTML = '';
+                    data.bullets.forEach(bulletText => {
+                        const li = document.createElement('li');
+                        li.innerHTML = bulletText;
+                        list.appendChild(li);
+                    });
+                }
+                removeCitationTags();
+            } catch (err) {
+                console.error("Gantt timeline switch error: ", err);
+            }
+        }
+
+        const simulationDb = {
+            'procurement': {
+                title: "Project Diagnosis: Procurement Lead-Time Slip",
+                impact: "Critical path items (such as structural steel or primary fit-out materials) slipped. Total Float reduced to zero, creating a direct impact on the scheduled handover date.",
+                actions: "• Extract a revised baseline schedule (revised program preparation) on MS Project/Primavera P6.<br>• Establish precise material consumption calculations to lock-in regional production capacity.<br>• Reprogram logic links, shifting parallel sequences onto remaining non-critical elements.",
+                commercial: "Negotiate legal JV pipelines to safely fast-track backup local vendors. Re-evaluate resource loading limits to absorb logistics variations without inflating project cost variances."
+            },
+            'formwork': {
+                title: "Project Diagnosis: Formwork Deck-Cycle Slip (Slab Deficits)",
+                impact: "Deck slab concrete pouring sequence dropped from a 7-day to a 10-day cycle, putting the structural critical path behind schedule.",
+                actions: "• Analyze slab cycling parameters using MS Project and crash the duration using increased resource loading on structural columns.<br>• Coordinate with formwork suppliers (Ulma/Peri/Aluminum) to bring in emergency prop configurations and deck panels.",
+                commercial: "Audit subcontractor daily logs, adjusting RA invoice billing to match strict milestone targets. Prevent cost overrun by optimizing deck material utilization metrics."
+            },
+            'subcontractor': {
+                title: "Project Diagnosis: Sub-Contractor Billing Dispute",
+                impact: "Disagreement over certified quantities on RA Bills caused progress to slow on finishing packages.",
+                actions: "• Perform physical site reconciliation and quantitative verification against certified BOQs.<br>• Prepare objective quantity and cost variances on MIS dashboards for executive alignment.",
+                commercial: "Expedite audit reviews, negotiate vendor claims, and adjust retainer releases to inject short-term capital and restore works momentum on site."
+            },
+            'interior': {
+                title: "Project Diagnosis: Turnkey Fit-Out Fast-Tracking",
+                impact: "Late client design alterations compressed the remaining design-to-execution window of key BCD Paliath premium fit-out projects.",
+                actions: "• Fast-track design workflows by running MEP coordination models in Revit alongside active site dry-wall structures.<br>• Create highly refined micro-schedules in MSP for daily progress control tracking.",
+                commercial: "Coordinated with sales and procurement teams to finalize raw material contracts ahead of schedule, mitigating material availability risks."
+            },
+            'formwork-systems': {
+                title: "Project Diagnosis: Multi-Formwork Logistics Bottleneck",
+                impact: "Mismanagement in moving component sets across Aluminum Formwork, Ulma shoring, and Peri framing assemblies generated execution friction.",
+                actions: "• Isolate inventory burn rates across individual layout blocks in Primavera P6.<br>• Striking striking and cycle sequences to establish standard stripping intervals for columns and walls.",
+                commercial: "Audit supplier hire contracts and implement resource-leveling models to eliminate redundant shoring components."
+            },
+            'pt-slabs': {
+                title: "Project Diagnosis: Post-Tensioning Stress Lag",
+                impact: "Extended curing durations required to reach optimal concrete compressive strengths delayed PT tendon stressing windows.",
+                actions: "• Introduce rapid-hardening concrete mix designs with specialized high-early-strength admixtures.<br>• Map layout dependencies to allow non-PT slab framing blocks to continue independently.",
+                commercial: "Optimize engineering material calculations for tendon and anchor kits to maintain uninterrupted supply lines."
+            },
+            'burn-rate': {
+                title: "Project Diagnosis: Material Burn-Rate & Waste Spikes",
+                impact: "Excess structural material waste on-site created critical budget variances (CV) and log jams.",
+                actions: "• Integrate Power BI progress reporting with weekly site material reconciliation sheets.<br>• Establish strict waste targets for steel cutters and concrete batching operations.",
+                commercial: "Reconcile material consumption logs with subcontractor RA bill submittals, enforcing recovery penalties for contract variances."
+            },
+            'jv-pipeline': {
+                title: "Project Diagnosis: JV Supply Pipeline Friction",
+                impact: "Custom finishing goods for the BCD Paliath Interior tracks stalled due to compliance disruptions with overseas suppliers.",
+                actions: "• Map design procurement lead times back to primary logic networks using MS Project.<br>• Establish parallel local tracking milestones for alternative custom suppliers.",
+                commercial: "Coordinate with developer legal frameworks to invoke alternative local vendor options without generating structural liability hazards."
+            },
+            'fitout-fasttrack': {
+                title: "Project Diagnosis: Fast-Track Joinery & MEP Sign-off",
+                impact: "Architectural drawings and MEP shop drawings approved ahead of schedule, opening a positive 12-day float buffer.",
+                actions: "• Release early factory production orders for custom joinery and marble flooring packages.<br>• Parallel-track first-fix MEP rough-ins alongside dry-wall metal stud framing in MS Project.",
+                commercial: "Locked in volume discount agreements with primary interior material vendors, reducing overall procurement cost variances."
+            },
+            'formwork-optimization': {
+                title: "Project Diagnosis: Aluminum Formwork Cycle Optimization",
+                impact: "High-rise slab cycles compressed successfully from 7 days down to 5 days per typical floor plate.",
+                actions: "• Deployed early-stripping drop-head prop configurations, releasing deck panels 48 hours faster.<br>• Maintained optimal concrete curing regimes monitored via maturity sensors.",
+                commercial: "Saved 14 days of tower crane hire fees and reduced monthly site overhead preliminaries."
+            },
+            've-reconciliation': {
+                title: "Project Diagnosis: Value Engineering & BOQ Optimization",
+                impact: "Structural steel rebar layout optimization resulted in a 4.2% reduction in total tonnage without altering design strength.",
+                actions: "• Re-modeled structural connections in Revit and updated quantity takeoff sheets in Excel.<br>• Conducted physical bar-bending schedule audits at central cutting yards.",
+                commercial: "Direct savings credited back to client contingency reserve funds, improving net project ROI."
+            },
+            'mis-dashboard': {
+                title: "Project Diagnosis: Executive MIS Dashboard Alignment",
+                impact: "Real-time Earned Value Management (EVM) tracking automated across all active developer and interior sites.",
+                actions: "• Integrated Primavera P6 schedule updates directly into Power BI executive dashboards.<br>• Automated weekly Schedule Variance (SV) and Cost Variance (CV) alerts for C-suite directors.",
+                commercial: "Eliminated reporting delays, ensuring faster client progress certifications and rapid RA bill payouts."
+            }
+        };
+
+        function runSimulation(simKey, btn) {
+            try {
+                document.querySelectorAll('.sim-selector-btn').forEach(b => b.classList.remove('active'));
+                if (btn) {
+                    btn.classList.add('active');
+                }
+
+                const sim = simulationDb[simKey];
+                const viewer = document.getElementById('sim-viewer-content');
+                
+                if (sim && viewer) {
+                    viewer.innerHTML = `
+                        <div class="sim-title-header"><i class="fa-solid fa-shield-halved"></i> ${sim.title}</div>
+                        <div class="sim-block">
+                            <div class="sim-block-title">Mathematical Impact</div>
+                            <div class="sim-block-text">${sim.impact}</div>
+                        </div>
+                        <div class="sim-block">
+                            <div class="sim-block-title">Planning Recovery Actions (MSP / Primavera P6)</div>
+                            <div class="sim-block-text">${sim.actions}</div>
+                        </div>
+                        <div class="sim-block">
+                            <div class="sim-block-title">Commercial Mitigation</div>
+                            <div class="sim-block-text">${sim.commercial}</div>
+                        </div>
+                    `;
+                }
+                removeCitationTags();
+            } catch (err) {
+                console.error("Simulation engine error: ", err);
+            }
+        }
+    </script>
+</head>
+<body>
+
+    <!-- Backdrop for expanded left drawer -->
+    <div class="sidebar-backdrop" id="sidebar-backdrop" onclick="closeMenu()"></div>
+
+    <div class="app-container">
+        
+        <!-- Left Collapsible Navigational Menu Drawer -->
+        <nav class="sidebar" id="sidebar-drawer">
+            <button class="close-drawer-btn" onclick="closeMenu()"><i class="fa-solid fa-xmark"></i></button>
+            
+            <div class="profile-card">
+                <div class="profile-avatar">
+                    <img src="https://media.licdn.com/dms/image/v2/D5603AQEG3iO88xi1uQ/profile-displayphoto-scale_400_400/B56Zru5C0iHkAg-/0/1764944526213?e=1790208000&v=beta&t=lSJTQcQhHdQy3bHWYsPYOEkZOwOznHew89KZ5OzNClU" alt="NISHCHAY D DEVANGA Profile Image" referrerpolicy="no-referrer" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                    <i class="fa-solid fa-user-tie" style="display: none; font-size: 2.2rem; color: var(--accent-blue);"></i>
+                </div>
+                <h2>NISHCHAY D DEVANGA</h2>
+                <p>Senior Planning Manager</p>
+            </div>
+
+            <div class="nav-menu">
+                <button class="nav-btn active" onclick="switchTab('dashboard', this)">
+                    <i class="fa-solid fa-chart-pie"></i> Executive Overview
+                </button>
+                <button class="nav-btn" onclick="switchTab('timeline', this)">
+                    <i class="fa-solid fa-timeline"></i> Interactive Gantt
+                </button>
+                <button class="nav-btn" onclick="switchTab('internship', this)">
+                    <i class="fa-solid fa-user-graduate"></i> Internships
+                </button>
+                <button class="nav-btn" onclick="switchTab('sandbox', this)">
+                    <i class="fa-solid fa-shield-halved"></i> Recovery Matrix
+                </button>
+                <button class="nav-btn" onclick="switchTab('technical', this)">
+                    <i class="fa-solid fa-layer-group"></i> Systems & Skills
+                </button>
+                <button class="nav-btn" onclick="switchTab('awards', this)">
+                    <i class="fa-solid fa-trophy"></i> Honors & Trophies
+                </button>
+                <button class="nav-btn" onclick="switchTab('contact', this)">
+                    <i class="fa-solid fa-address-book"></i> Contact Channels
+                </button>
+            </div>
+
+            <div class="sidebar-footer">
+                <p>© 2026 Nishchay D Devanga</p>
+            </div>
+        </nav>
+
+        <!-- Main Content Area -->
+        <main class="main-workspace">
+            
+            <div class="top-bar">
+                <button class="menu-toggle-btn" onclick="toggleMenu()">
+                    <i class="fa-solid fa-bars-staggered"></i> Navigator
+                </button>
+
+                <div class="header-center-title" onclick="goToExecutiveOverview()" title="Click to view Executive Overview">
+                    <h1>NISHCHAY D DEVANGA</h1>
+                    <p>Senior Planning Manager</p>
+                </div>
+
+                <div class="quick-contact-pills">
+                    <a href="mailto:nishchay.d.d@gmail.com" class="contact-pill">
+                        <i class="fa-solid fa-envelope" style="color: var(--accent-blue);"></i> Email
+                    </a>
+                    <a href="tel:+971542122594" class="contact-pill">
+                        <i class="fa-solid fa-phone" style="color: var(--accent-blue);"></i> UAE
+                    </a>
+                </div>
+            </div>
+
+            <div class="tab-section-header" id="current-tab-heading">
+                Executive Overview
+            </div>
+
+            <!-- TAB 1: EXECUTIVE OVERVIEW -->
+            <div id="dashboard" class="tab-content active">
+                
+                <div class="kpi-row">
+                    <div class="kpi-card" onclick="switchTab('timeline')" title="View in Interactive Gantt Timeline">
+                        <div class="kpi-value">8+ Years</div>
+                        <div class="kpi-label">Project Controls & Planning</div>
+                        <i class="fa-solid fa-calendar-check"></i>
+                    </div>
+                    <div class="kpi-card" onclick="switchTab('timeline')" title="View in Interactive Gantt Timeline">
+                        <div class="kpi-value">AED 80M</div>
+                        <div class="kpi-label">Dubai Active Order Book</div>
+                        <i class="fa-solid fa-city"></i>
+                    </div>
+                    <div class="kpi-card" onclick="switchTab('timeline')" title="View in Interactive Gantt Timeline">
+                        <div class="kpi-value">5 Active Projects</div>
+                        <div class="kpi-label">Presently Handling: 2 Residential | 3 Interior Fit-Outs</div>
+                        <i class="fa-solid fa-folder-tree"></i>
+                    </div>
+                    <div class="kpi-card" onclick="switchTab('timeline')" title="View in Interactive Gantt Timeline">
+                        <div class="kpi-value">₹809+ Cr</div>
+                        <div class="kpi-label">Completed Indian Portfolio</div>
+                        <i class="fa-solid fa-coins"></i>
+                    </div>
+                    <div class="kpi-card" onclick="switchTab('awards')" title="View in Honors & Trophies">
+                        <div class="kpi-value">3 / 2</div>
+                        <div class="kpi-label">Appraisals / Promos in 1 Yr</div>
+                        <i class="fa-solid fa-up-long"></i>
+                    </div>
+                </div>
+
+                <div class="grid-2col">
+                    <div class="dashboard-card">
+                        <div class="card-header-container">
+                            <h3 class="card-title"><i class="fa-solid fa-user-tie" style="color: var(--accent-blue);"></i> Professional Core Profile Summary</h3>
+                        </div>
+                        <p style="font-size: 0.92rem; line-height: 1.6; color: var(--dark-slate); margin-bottom: 14px; text-align: justify;">
+                            Results-driven and highly ambitious <strong>Senior Planning Manager</strong> equipped with over 8 years of specialized experience commanding complex civil project planning and integrated controls pipelines across high-density commercial, premium residential, infrastructure, and luxury interior scopes throughout India and Dubai.
+                        </p>
+                        <p style="font-size: 0.92rem; line-height: 1.6; color: var(--dark-slate); text-align: justify;">
+                            A technical subject matter expert across <strong>Primavera P6, MS Project, and CPM scheduling logic networks</strong>, with proven mastery in high-impact delay analysis methodologies, baseline crashing sequences, and micro-scheduling recovery setups. Recognized consistently by corporate directors and C-suite executives for outstanding organizational execution, delivery turnaround speed, and high operational excellence under compressed timelines.
+                        </p>
+                    </div>
+
+                    <div class="dashboard-card">
+                        <div class="card-header-container">
+                            <h3 class="card-title"><i class="fa-solid fa-sliders" style="color: var(--accent-blue);"></i> Master Core Competency Matrix</h3>
+                        </div>
+                        <div class="tag-cloud" style="margin-bottom: 14px;">
+                            <span class="skill-tag">CPM Scheduling Logic</span>
+                            <span class="skill-tag">Delay & Path Impact Tracking</span>
+                            <span class="skill-tag">Earned Value Monitoring (EVM)</span>
+                            <span class="skill-tag">Resource Loading & Leveling</span>
+                            <span class="skill-tag">Variance & Cost Analysis</span>
+                            <span class="skill-tag">Subcontractor RA Certification</span>
+                            <span class="skill-tag">Joint Venture (JV) Alignment</span>
+                            <span class="skill-tag">MIS Executive Dashboards</span>
+                        </div>
+                        <p style="font-size: 0.82rem; color: var(--text-muted); line-height: 1.45;">
+                            Currently leading comprehensive turn-key planning matrices, operational systems setups, and developer frameworks from base-level formation up to master delivery control for BCD Global (BCD Real Estate Development trade banner) alongside the premium BCD Paliath Interiors division in Dubai.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="grid-2col">
+                    <div class="dashboard-card">
+                        <div class="card-header-container">
+                            <h3 class="card-title"><i class="fa-solid fa-network-wired" style="color: var(--accent-blue);"></i> Core Project Controls Operational Scope</h3>
+                        </div>
+                        <ul class="styled-list">
+                            <li><strong>Consolidated Program Oversight:</strong> Directing end-to-end planning and operational frameworks across the BCD Global Developer Projects and BCD Paliath Interiors division projects.</li>
+                            <li><strong>Strategic Corporate Setup:</strong> Spearheaded joint-venture (JV) legalization setup, contractor integration frameworks, and complete organization base development.</li>
+                            <li><strong>Integrated Controls Architecture:</strong> Synchronizing consultants, sales teams, legal bodies, sub-contractors, and active field execution forces for multiple concurrent projects.</li>
+                            <li><strong>Critical-Path Tracking:</strong> Mapping delay patterns using DPR/WPR/MPR reporting to insulate the AED 80M portfolio.</li>
+                        </ul>
+                    </div>
+
+                    <div class="dashboard-card">
+                        <div class="card-header-container">
+                            <h3 class="card-title"><i class="fa-solid fa-map-location-dot" style="color: var(--accent-blue);"></i> Landmark Project Value Matrix</h3>
+                        </div>
+                        <ul class="styled-list">
+                            <li><strong>Prestige Tech Cloud:</strong> ₹322+ Cr Commercial Project (Commanded 5 Multi-Story Tech Towers out of 8 office developments).</li>
+                            <li><strong>Godrej Nurture:</strong> ₹290 Cr Premium Residential High-Rise Structural Complex.</li>
+                            <li><strong>Godrej Ananda (Ph 1 & 2):</strong> ₹120 Cr Fast-Track Housing Infrastructure Framework.</li>
+                            <li><strong>Assetz Bloom & Dell:</strong> ₹83 Cr Residential Concrete Project Portfolio.</li>
+                            <li><strong>Brigade Laguna:</strong> ₹75 Cr Residential Concrete Tower Development.</li>
+                            <li><strong>Century Horizon & Royale Woods:</strong> Commercial Handover Controls and Closure Balance Audits.</li>
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- TAB 2: INTERACTIVE GANTT TIMELINE -->
+            <div id="timeline" class="tab-content">
+                <div class="vertical-timeline-layout">
+                    
+                    <div class="vertical-timeline-track-card">
+                        <h4 style="color: var(--primary-navy); font-size: 0.95rem; margin-bottom: 18px;"><i class="fa-solid fa-route" style="color: var(--accent-blue);"></i> Career CPM Milestones</h4>
+                        <div class="v-gantt-flow">
+                            <div class="v-gantt-node active" onclick="loadTimelineNode('bcd-gl', this)">
+                                <div class="v-gantt-dot"></div>
+                                <div class="v-gantt-year">2025 - Present</div>
+                                <div class="v-gantt-label">BCD Global Dubai</div>
+                            </div>
+                            <div class="v-gantt-node" onclick="loadTimelineNode('bcd-in', this)">
+                                <div class="v-gantt-dot"></div>
+                                <div class="v-gantt-year">2023 - 2025</div>
+                                <div class="v-gantt-label">BCD Group India</div>
+                            </div>
+                            <div class="v-gantt-node" onclick="loadTimelineNode('sai', this)">
+                                <div class="v-gantt-dot"></div>
+                                <div class="v-gantt-year">2022 - 2023</div>
+                                <div class="v-gantt-label">SAI Construction</div>
+                            </div>
+                            <div class="v-gantt-node" onclick="loadTimelineNode('nccc', this)">
+                                <div class="v-gantt-dot"></div>
+                                <div class="v-gantt-year">2019 - 2022</div>
+                                <div class="v-gantt-label">NCCCL (India)</div>
+                            </div>
+                            <div class="v-gantt-node" onclick="loadTimelineNode('bmsit', this)">
+                                <div class="v-gantt-dot"></div>
+                                <div class="v-gantt-year">2019 - 2020</div>
+                                <div class="v-gantt-label">BMSIT Faculty</div>
+                            </div>
+                            <div class="v-gantt-node" onclick="loadTimelineNode('site-eng', this)">
+                                <div class="v-gantt-dot"></div>
+                                <div class="v-gantt-year">2018 - 2019</div>
+                                <div class="v-gantt-label">Darvin Engineering</div>
+                            </div>
+                            <div class="v-gantt-node" onclick="loadTimelineNode('technic-s1', this)">
+                                <div class="v-gantt-dot"></div>
+                                <div class="v-gantt-year">2017 (Shantinagar)</div>
+                                <div class="v-gantt-label">Technic Constructions</div>
+                            </div>
+                            <div class="v-gantt-node" onclick="loadTimelineNode('technic-s2', this)">
+                                <div class="v-gantt-dot"></div>
+                                <div class="v-gantt-year">2017 (Jalahalli)</div>
+                                <div class="v-gantt-label">Technic Constructions</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="v-gantt-detail-card">
+                        <div class="v-gantt-viewer-panel" id="gantt-panel">
+                            <h4 id="node-company" style="color: var(--primary-navy); font-size: 1.2rem; font-weight: 800; margin-bottom: 4px;">BCD Global, Dubai, UAE</h4>
+                            <p id="node-title" style="color: var(--accent-blue); font-weight: 700; font-size: 0.85rem; margin-bottom: 18px; text-transform: uppercase;">Senior Planning Manager / Project Planner Lead (Overall Company Planner)</p>
+                            <ul class="styled-list" id="node-bullets">
+                                <li>Directing end-to-end master planning, scheduling architectures, and operational controls across BCD Global Developer Projects and the specialized BCD Paliath Interiors division.</li>
+                                <li>Serving as the central Company Lead Planner overseeing overarching cost variances, master time baselines, procurement cycles, and delivery handovers for 5 active concurrent developments (AED 80M order book).</li>
+                                <li>Pioneering company-wide Key Performance Indicators (KPIs) including Schedule Performance Index (SPI), Cost Performance Index (CPI), and Earned Value Management (EVM) frameworks for executive board evaluations.</li>
+                                <li>Formulating Key Risk Indicators (KRIs) to proactively detect logic disconnects, float degradation, subcontractor under-performance, and critical path supply chain slippages.</li>
+                                <li>Developing, baseline tracking, and updating master integrated Primavera P6 (EPPM) and MS Project schedules across EPC lifecycles (Engineering, Procurement, Construction, Fit-out).</li>
+                                <li>Executing advanced Time-Impact Delay Analyses (TIA), window analyses, and critical path resequencing strategies to insulate projects from Liquidated Damages (LD) and baseline offsets.</li>
+                                <li>Directing turn-key commercial interior fit-out schedules, synchronizing long-lead custom joinery, MEP first/second-fix approvals, and specialized architectural finishes.</li>
+                                <li>Heading Joint Venture (JV) setup logistics, contractor company formation, legal documentation structures, and foundational vendor qualification frameworks.</li>
+                                <li>Managing master cash-flow forecasting, resource loading/leveling models, and monthly financial S-curves in alignment with developer funding drawdowns.</li>
+                                <li>Auditing subcontractor interim payment applications (RA Bills), certifying executed quantities against verified site physical progress logs.</li>
+                                <li>Synthesizing dynamic, interactive Power BI and Excel Executive MIS Dashboards providing C-suite leadership with real-time portfolio health monitoring.</li>
+                                <li>Establishing procurement tracking mechanisms for primary civil systems including Aluminum Formwork, Ulma shoring, and Post-Tensioning tendon kits.</li>
+                                <li>Managing stakeholder communication matrix bridging consultants, main contractors, sub-contractors, project directors, legal teams, sales divisions, and client representatives.</li>
+                                <li>Establishing standardized site reporting protocols (DPR, WPR, MPR) and guiding site engineering teams on daily milestone tracking.</li>
+                                <li>Proactively driving cost-optimization models and resource redistribution to maintain gross margins across both development and interior fit-out divisions.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- TAB 3: INTERNSHIPS -->
+            <div id="internship" class="tab-content">
+                <div class="grid-2col">
+                    <div class="dashboard-card">
+                        <div class="card-header-container">
+                            <h3 class="card-title"><i class="fa-solid fa-graduation-cap" style="color: var(--accent-blue);"></i> Corporate & Field Internships</h3>
+                        </div>
+                        <ul class="styled-list">
+                            <li>
+                                <strong>Technic Constructions:</strong><br>
+                                <span style="font-size: 0.82rem; color: var(--text-muted);">Executed comprehensive labor management frameworks, concrete trial mix optimization configurations, and piecework structural cost calculations. Supervised dewatering, sludge extraction setups, structural retaining walls, concrete footings, and mass excavation controls.</span>
+                            </li>
+                            <li style="margin-top: 14px;">
+                                <strong>Century Real Estate Holdings Pvt. Ltd.:</strong><br>
+                                <span style="font-size: 0.82rem; color: var(--text-muted);">Developed interpersonal business strategies while engineering hands-on structural formwork tracking, blockwork mapping, structural surface hacking, expanded metal mesh integrations, interior plastering operations, and advanced Post-Tension (PT) slab stress evaluations.</span>
+                            </li>
+                            <li style="margin-top: 14px;">
+                                <strong>Awign Enterprises Pvt. Ltd.:</strong><br>
+                                <span style="font-size: 0.82rem; color: var(--text-muted);">Recognized with a high-profile executive Letter of Recommendation (LOR) for achieving outstanding optimization and efficiency parameters during live data logistics operations.</span>
+                            </li>
+                            <li style="margin-top: 14px;">
+                                <strong>Nisarga Enterprises:</strong><br>
+                                <span style="font-size: 0.82rem; color: var(--text-muted);">Audited complex water treatment plant engineering parameters, commercial water softener loop layouts, and comparative structural analysis across specialized baseline purification systems.</span>
+                            </li>
+                            <li style="margin-top: 14px;">
+                                <strong>NeSa Engineers:</strong><br>
+                                <span style="font-size: 0.82rem; color: var(--text-muted);">Directed intensive field traffic engineering data analytics programs at the industrial United Breweries Ltd. layout grids across Hyderabad and Golconda sectors.</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="dashboard-card">
+                        <div class="card-header-container">
+                            <h3 class="card-title"><i class="fa-solid fa-book-bookmark" style="color: var(--accent-blue);"></i> Academic Research Projects</h3>
+                        </div>
+                        <ul class="styled-list" id="academic-projects" style="margin-bottom: 16px;">
+                            <li>
+                                <strong>M. Tech Thesis Project:</strong><br>
+                                <em style="color: var(--accent-blue); font-size: 0.85rem;">"Utilization of Unused Old Cement"</em><br>
+                                <span style="font-size: 0.8rem; color: var(--text-muted);">Conducted structural performance audits and concrete setting characteristics of reclaimed materials under Ambuja Cement engineering guidance.</span>
+                            </li>
+                            <li style="margin-top: 14px;">
+                                <strong>B.E. Graduation Project:</strong><br>
+                                <em style="color: var(--accent-blue); font-size: 0.85rem;">"Cold Bituminous Mixes with NanoTAC Additive"</em><br>
+                                <span style="font-size: 0.8rem; color: var(--text-muted);">Engineered load-bearing limits and cost-effective pavement mixes to track reductions in bituminous pavement curing intervals.</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 4: DELAY SIMULATION & RECOVERY MATRIX -->
+            <div id="sandbox" class="tab-content">
+                <div class="sim-box">
+                    <div class="sim-title-header">
+                        <i class="fa-solid fa-gauge-high" style="color: var(--accent-blue);"></i> High-Fidelity Delay Analysis & Strategic Recovery Matrix (RAG Status)
+                    </div>
+                    <p style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 18px; line-height: 1.45;">
+                        Select an engineering scenario below. This RAG matrix tracks Red (Critical), Amber (High Risk), and Green (On Track / Optimized) project control workflows.
+                    </p>
+
+                    <div class="sim-grid">
+                        <div class="sim-menu">
+                            <button class="sim-selector-btn active" onclick="runSimulation('procurement', this)">
+                                <span>1. Procurement Lead-Time Slip</span>
+                                <span class="severity critical">Critical Path</span>
+                            </button>
+                            <button class="sim-selector-btn" onclick="runSimulation('formwork', this)">
+                                <span>2. Aluminum Formwork Deficit</span>
+                                <span class="severity critical">Critical Path</span>
+                            </button>
+                            <button class="sim-selector-btn" onclick="runSimulation('subcontractor', this)">
+                                <span>3. Sub-Contractor RA Dispute</span>
+                                <span class="severity high">Cost Risk</span>
+                            </button>
+                            <button class="sim-selector-btn" onclick="runSimulation('interior', this)">
+                                <span>4. Turnkey Fit-Out Fast-Track</span>
+                                <span class="severity critical">Schedule Float</span>
+                            </button>
+                            <button class="sim-selector-btn" onclick="runSimulation('formwork-systems', this)">
+                                <span>5. Ulma / Peri System Jam</span>
+                                <span class="severity high">Logistics Risk</span>
+                            </button>
+                            <button class="sim-selector-btn" onclick="runSimulation('pt-slabs', this)">
+                                <span>6. Post-Tensioning Stress Lag</span>
+                                <span class="severity critical">Critical Path</span>
+                            </button>
+                            <button class="sim-selector-btn" onclick="runSimulation('burn-rate', this)">
+                                <span>7. Quantity Burn-Rate Spill</span>
+                                <span class="severity high">Material Spill</span>
+                            </button>
+                            <button class="sim-selector-btn" onclick="runSimulation('jv-pipeline', this)">
+                                <span>8. JV Pipeline Disruption</span>
+                                <span class="severity critical">Handover Float</span>
+                            </button>
+                            <button class="sim-selector-btn" onclick="runSimulation('fitout-fasttrack', this)">
+                                <span>9. Fast-Track Joinery Sign-off</span>
+                                <span class="severity low">On Track</span>
+                            </button>
+                            <button class="sim-selector-btn" onclick="runSimulation('formwork-optimization', this)">
+                                <span>10. Deck Cycle Optimization</span>
+                                <span class="severity low">Optimized</span>
+                            </button>
+                            <button class="sim-selector-btn" onclick="runSimulation('ve-reconciliation', this)">
+                                <span>11. Value Engineering Audit</span>
+                                <span class="severity low">Cost Positive</span>
+                            </button>
+                            <button class="sim-selector-btn" onclick="runSimulation('mis-dashboard', this)">
+                                <span>12. MIS Dashboard Alignment</span>
+                                <span class="severity low">Real-Time</span>
+                            </button>
+                        </div>
+
+                        <div class="sim-viewer" id="sim-viewer-content">
+                            <div class="sim-title-header"><i class="fa-solid fa-shield-halved" style="color: var(--accent-blue);"></i> Project Diagnosis: Procurement Lead-Time Slip</div>
+                            
+                            <div class="sim-block">
+                                <div class="sim-block-title">Mathematical Impact</div>
+                                <div class="sim-block-text" id="sim-impact">
+                                    Critical path items (such as structural steel or primary fit-out materials) slipped. Total Float reduced to zero, creating a direct impact on the scheduled handover date.
+                                </div>
+                            </div>
+
+                            <div class="sim-block">
+                                <div class="sim-block-title">Planning Recovery Actions (MSP / Primavera P6)</div>
+                                <div class="sim-block-text" id="sim-actions">
+                                    • Extract a revised baseline schedule (revised program preparation) on MS Project/P6.<br>
+                                    • Establish precise material consumption calculations to lock-in regional production capacity.<br>
+                                    • Reprogram logic links, shifting parallel sequences onto remaining non-critical elements.
+                                </div>
+                            </div>
+
+                            <div class="sim-block">
+                                <div class="sim-block-title">Commercial Mitigation</div>
+                                <div class="sim-block-text" id="sim-commercial">
+                                    Negotiate legal JV pipelines to safely fast-track backup local vendors. Re-evaluate resource loading limits to absorb logistics variations without inflating project cost variances.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 5: SYSTEMS & SKILLS MATRIX -->
+            <div id="technical" class="tab-content">
+                
+                <div class="dashboard-card">
+                    <div class="card-header-container">
+                        <h3 class="card-title"><i class="fa-solid fa-helmet-safety" style="color: var(--accent-blue);"></i> Structural Execution Systems Exposure</h3>
+                    </div>
+                    <div class="systems-grid">
+                        <div class="system-card">
+                            <h4><i class="fa-solid fa-layer-group" style="color: var(--accent-blue);"></i> Aluminum Formwork</h4>
+                            <p>Extensive high-rise residential cycle experience. Optimization of rapid deck, column, and wall stripping sequences.</p>
+                        </div>
+                        <div class="system-card">
+                            <h4><i class="fa-solid fa-circle-nodes" style="color: var(--accent-blue);"></i> Ulma & Peri Systems</h4>
+                            <p>Applied for custom, complex, heavy-infrastructure commercial concrete structures.</p>
+                        </div>
+                        <div class="system-card">
+                            <h4><i class="fa-solid fa-border-all" style="color: var(--accent-blue);"></i> Post-Tension (PT) Slabs</h4>
+                            <p>Hands-on scheduling of PT tendon laying, stressing, and grouting processes on large commercial floor plates.</p>
+                        </div>
+                        <div class="system-card">
+                            <h4><i class="fa-solid fa-couch" style="color: var(--accent-blue);"></i> High-End Turnkey Fit-Outs</h4>
+                            <p>Actively managing scheduling, procurement lead-times, and custom finishes for premium BCD Paliath Interior operations.</p>
+                        </div>
+                        <div class="system-card">
+                            <h4><i class="fa-solid fa-square" style="color: var(--accent-blue);"></i> Pre-Tension Elements</h4>
+                            <p>Experience tracking manufacturing, transportation, and erection phases for prefabricated components.</p>
+                        </div>
+                        <div class="system-card">
+                            <h4><i class="fa-solid fa-wood-cutter" style="color: var(--accent-blue);"></i> MS Sheet, Prop & Cup Lock</h4>
+                            <p>In-depth understanding of standard conventional scaffolding, staging design, and ledger load limits.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid-2col">
+                    <div class="dashboard-card" style="margin-bottom:0;">
+                        <div class="card-header-container">
+                            <h3 class="card-title"><i class="fa-solid fa-cubes" style="color: var(--accent-blue);"></i> Core Software Tools</h3>
+                        </div>
+                        <div style="margin-bottom: 14px;">
+                            <h4 style="font-size: 0.82rem; color: var(--primary-navy); margin-bottom: 8px;">Planning & CPM Analysis Matrix</h4>
+                            <div class="tag-cloud">
+                                <span class="skill-tag">Primavera P6 Professional</span>
+                                <span class="skill-tag">MS Project (MSP)</span>
+                                <span class="skill-tag">Critical Path Method (CPM)</span>
+                                <span class="skill-tag">Resource Loading & Leveling</span>
+                            </div>
+                        </div>
+                        <div style="margin-bottom: 14px;">
+                            <h4 style="font-size: 0.82rem; color: var(--primary-navy); margin-bottom: 8px;">Business Analytics</h4>
+                            <div class="tag-cloud">
+                                <span class="skill-tag">Power BI Dashboards</span>
+                                <span class="skill-tag">Advanced Excel</span>
+                                <span class="skill-tag">SAP / ERP Systems</span>
+                                <span class="skill-tag">MIS Presentation Layouts</span>
+                            </div>
+                        </div>
+                        <div>
+                            <h4 style="font-size: 0.82rem; color: var(--primary-navy); margin-bottom: 8px;">Technical Drawing</h4>
+                            <div class="tag-cloud">
+                                <span class="skill-tag">AutoCAD</span>
+                                <span class="skill-tag">Revit MEP</span>
+                                <span class="skill-tag">Revit Architecture</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dashboard-card" style="margin-bottom:0;">
+                        <div class="card-header-container">
+                            <h3 class="card-title"><i class="fa-solid fa-graduation-cap" style="color: var(--accent-blue);"></i> Academic Thesis & Papers</h3>
+                        </div>
+                        <ul class="styled-list">
+                            <li><strong>M. Tech Structural Thesis:</strong> <br><em>"Utilization of Unused Old Cement"</em><br><small style="color: var(--text-muted);">VTU Extension - RASTA Center for Road Technology</small></li>
+                            <li><strong>B.E. Structural Project:</strong> <br><em>"Cold Bituminous Mixes with NanoTAC Additive"</em><br><small style="color: var(--text-muted);">VTU Affiliated - Shri Pillappa College of Engineering</small></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 6: HONORS & TROPHIES -->
+            <div id="awards" class="tab-content">
+                <div class="trophy-grid">
+                    
+                    <div class="trophy-card">
+                        <div class="trophy-icon"><i class="fa-solid fa-circle-check"></i></div>
+                        <div class="trophy-info">
+                            <h4>3 Professional Appraisals in 1 Year</h4>
+                            <p>Conferred under a single annual cycle for demonstrating outstanding execution tracking, scheduling accuracy, and project leadership properties.</p>
+                        </div>
+                    </div>
+
+                    <div class="trophy-card">
+                        <div class="trophy-icon"><i class="fa-solid fa-rocket"></i></div>
+                        <div class="trophy-info">
+                            <h4>2 Career Promotions in 1 Year</h4>
+                            <p>Accelerated track promotion recognizing high capabilities in resolving structural delay constraints and delivering on-time handovers.</p>
+                        </div>
+                    </div>
+
+                    <div class="trophy-card">
+                        <div class="trophy-icon"><i class="fa-solid fa-award"></i></div>
+                        <div class="trophy-info">
+                            <h4>Government BBMP LOA</h4>
+                            <p>Official Letter of Appreciation awarded by the Government of Karnataka in recognition of dedicated civic tracking and deployment service during the pandemic response.</p>
+                        </div>
+                    </div>
+
+                    <div class="trophy-card">
+                        <div class="trophy-icon"><i class="fa-solid fa-file-shield"></i></div>
+                        <div class="trophy-info">
+                            <h4>Government Border Supervisor LOR</h4>
+                            <p>Executive Letter of Recommendation from the Government of Karnataka for exceptional resource management while supervising major border check posts.</p>
+                        </div>
+                    </div>
+
+                    <div class="trophy-card">
+                        <div class="trophy-icon"><i class="fa-solid fa-envelope-open-text"></i></div>
+                        <div class="trophy-info">
+                            <h4>Email Of Appreciation (EOA)</h4>
+                            <p>Awarded directly by a corporate project client for designing the best and most interactive project management controls and MIS Dashboard layouts.</p>
+                        </div>
+                    </div>
+
+                    <div class="trophy-card">
+                        <div class="trophy-icon"><i class="fa-solid fa-scroll"></i></div>
+                        <div class="trophy-info">
+                            <h4>Corporate Awign Enterprises LOR</h4>
+                            <p>Letter of Recommendation certifying top performance, analytical delivery metrics, and operational control skills during live project management tracks.</p>
+                        </div>
+                    </div>
+
+                    <div class="trophy-card">
+                        <div class="trophy-icon"><i class="fa-solid fa-shield-halved"></i></div>
+                        <div class="trophy-info">
+                            <h4>Tritiya Sopan Scout Award</h4>
+                            <p>Conferred by the Bharat Scouts and Guides (State Council of Karnataka, 2008).</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 7: CONTACT CHANNELS -->
+            <div id="contact" class="tab-content">
+                
+                <div class="category-section-title">
+                    <i class="fa-solid fa-id-card" style="color: var(--accent-blue);"></i> Direct Contact Channels
+                </div>
+                <div class="contact-grid">
+                    
+                    <a href="mailto:nishchay@thebcdglobal.com" class="contact-card">
+                        <div class="contact-icon-box">
+                            <i class="fa-solid fa-briefcase"></i>
+                        </div>
+                        <div class="contact-details">
+                            <h4>Official Work Email</h4>
+                            <p>nishchay@thebcdglobal.com</p>
+                        </div>
+                    </a>
+
+                    <a href="mailto:nishchay.d.d@gmail.com" class="contact-card">
+                        <div class="contact-icon-box">
+                            <i class="fa-solid fa-envelope"></i>
+                        </div>
+                        <div class="contact-details">
+                            <h4>Personal Email Address</h4>
+                            <p>nishchay.d.d@gmail.com</p>
+                        </div>
+                    </a>
+
+                    <a href="tel:+971542122594" class="contact-card">
+                        <div class="contact-icon-box">
+                            <i class="fa-solid fa-phone"></i>
+                        </div>
+                        <div class="contact-details">
+                            <h4>UAE Direct Contact</h4>
+                            <p>+971 54 212 2594</p>
+                        </div>
+                    </a>
+
+                    <a href="tel:+919844186806" class="contact-card">
+                        <div class="contact-icon-box">
+                            <i class="fa-solid fa-mobile-screen"></i>
+                        </div>
+                        <div class="contact-details">
+                            <h4>India Direct Contact</h4>
+                            <p>+91 98441 86806</p>
+                        </div>
+                    </a>
+
+                </div>
+
+                <div class="category-section-title">
+                    <i class="fa-solid fa-share-nodes" style="color: var(--accent-blue);"></i> Social & Professional Networks
+                </div>
+                <div class="contact-grid">
+
+                    <a href="https://www.linkedin.com/in/nishchayddevanga/" target="_blank" class="contact-card">
+                        <div class="contact-icon-box">
+                            <i class="fa-brands fa-linkedin-in"></i>
+                        </div>
+                        <div class="contact-details">
+                            <h4>Professional LinkedIn</h4>
+                            <p>linkedin.com/in/nishchayddevanga</p>
+                        </div>
+                    </a>
+
+                    <a href="https://www.instagram.com/nishchay_d_devanga/" target="_blank" class="contact-card">
+                        <div class="contact-icon-box">
+                            <i class="fa-brands fa-instagram"></i>
+                        </div>
+                        <div class="contact-details">
+                            <h4>Instagram Profile</h4>
+                            <p>@nishchay_d_devanga</p>
+                        </div>
+                    </a>
+
+                    <a href="https://www.facebook.com/nishchayddevanga/" target="_blank" class="contact-card">
+                        <div class="contact-icon-box">
+                            <i class="fa-brands fa-facebook-f"></i>
+                        </div>
+                        <div class="contact-details">
+                            <h4>Facebook Profile</h4>
+                            <p>facebook.com/nishchayddevanga</p>
+                        </div>
+                    </a>
+
+                    <a href="https://www.snapchat.com/add/nishchaydevanga" target="_blank" class="contact-card">
+                        <div class="contact-icon-box">
+                            <i class="fa-brands fa-snapchat"></i>
+                        </div>
+                        <div class="contact-details">
+                            <h4>Snapchat Profile</h4>
+                            <p>nishchaydevanga</p>
+                        </div>
+                    </a>
+
+                </div>
+
+            </div>
+
+        </main>
+    </div>
+</body>
+</html>
